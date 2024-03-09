@@ -1,3 +1,13 @@
+## Dextar Airlines
+
+
+# Description
+Implementation of Airlines Management System using OOP aproach. Imagine you are an administrator of a big 
+Dextar Airlines company, which provides air transport services. You need to manage all processes as quickly as possible because each delay is costly. 
+This project will help you automize the management of such functionalities as flights management, interaction with customers and much more! 
+
+
+
 # Nu primesc notă pentru că nu am pus titlu și descriere
 
 ### Important!
