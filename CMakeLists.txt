@@ -4,9 +4,19 @@ cmake_minimum_required(VERSION 3.24)
 # for now, the project name is used as the executable name
 project(oop)
 
+include(FetchContent)
+set(BUILD_SHARED_LIBS OFF)
+FETCHCONTENT_DECLARE(SFML GIT_REPOSITORY https://github.com/SFML/SFML.git GIT_TAG 2.6.1)
+FetchContent_MakeAvailable(SFML)
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+#set(SFML_DIR D:/Unibuc CLion/SFML/SFML-2.6.1/lib/cmake/SFML)
+#include_directories(D:/Unibuc CLion/SFML/SFML-2.6.1/include/SFML)
+
+
 
 option(WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 
@@ -21,6 +31,9 @@ set(is_rel_with_deb "$<CONFIG:RelWithDebInfo>")
 set(debug_mode "$<OR:${is_debug},${is_rel_with_deb}>")
 
 ###############################################################################
+
+# NOTE: Also update SFML_VERSION env var in .github/workflows/cmake.yml:59
+
 
 # custom functions
 
@@ -64,6 +77,13 @@ function(set_custom_stdlib_and_sanitizers target add_apple_asan)
     endif()
 endfunction()
 
+
+#sfml_set_custom_stdlib(sfml-system)
+#sfml_set_custom_stdlib(sfml-window)
+#sfml_set_custom_stdlib(sfml-graphics)
+#sfml_set_custom_stdlib(sfml-audio)
+
+
 ###############################################################################
 
 # external dependencies with FetchContent
@@ -92,6 +112,8 @@ endfunction()
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
 add_executable(${PROJECT_NAME} main.cpp
         generated/src/Helper.cpp)
+
+target_link_libraries(oop sfml-graphics)
 
 ###############################################################################
 
@@ -131,7 +153,9 @@ target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE generated/include)
 # target_link_libraries(${PROJECT_NAME} <SomeLib>)
 
 ###############################################################################
-
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SFML_SOURCE_DIR}/include)
+target_link_directories(${PROJECT_NAME} PRIVATE ${SFML_BINARY_DIR}/lib)
+target_link_libraries(oop sfml-graphics sfml-window sfml-audio sfml-system)
 # copy binaries to "bin" folder; these are uploaded as artifacts on each release
 # update name in .github/workflows/cmake.yml:29 when changing "bin" name here
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
@@ -140,3 +164,10 @@ install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 if(APPLE)
     install(FILES launcher.command DESTINATION bin)
 endif()
+
+#set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
+#set(SFML_ROOT D:/SFML-2.6.1)
+
+#set(SFML_STATIC_LIBRARIES TRUE)
+#target_link_libraries(oop sfml-system sfml-window sfml-audio sfml-graphics)
+#find_package(SFML REQUIRED COMPONENTS window graphics)
